@@ -240,7 +240,7 @@ tbody tr{animation:fadeInRow .3s ease}
 <div class="stats-grid" id="dashStats"></div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <div class="panel">
-<div class="panel-head"><h3>&#128269; Recent Activity</h3><button class="btn btn-ghost btn-sm" onclick="logAudit('Manual','Test event logged');renderDashboard()">+ Test</button></div>
+<div class="panel-head"><h3>&#128269; Recent Activity</h3></div>
 <div class="panel-body"><div class="activity-list" id="dashLog"></div></div>
 </div>
 <div class="panel">
@@ -554,7 +554,7 @@ function loadData(){
   }
 }
 function initSeed(){
-  console.log('Initializing seed data...');
+  // console.log('Initializing seed data...');
   users.push({id:'admin',pwd:'admin123',name:'System Administrator'});
   users.push({id:'manager',pwd:'manager123',name:'Tax Manager'});
   clients.push({code:'CLI-001',name:'Rahul Sharma',pan:'ABCDE1234F',dob:'1985-03-15',gender:'Male',address:'12 MG Road',city:'Delhi',state:'Delhi',pincode:'110001',tel:'011-23456789',mobile:'9876543210',email:'rahul@test.com',occ:'Software Engineer',aadhar:'123456789012',ward:'Ward 1',ay:'2024-25',createdAt:new Date().toISOString()});
@@ -578,10 +578,11 @@ function initSeed(){
 function doLogout(){
   logAudit('Logout','User '+currentUser+' logged out');
   currentUser=null;
-  $('app').classList.add('hidden');
-  $('loginScreen').classList.remove('hidden');
+  $('app').style.display='none';
+  $('loginScreen').style.display='flex';
   $('uid').value='';
   $('pwd').value='';
+  renderDashboard();
 }
 function renderDashboard(){
   const stats=[
@@ -876,7 +877,7 @@ function showScreen(s){
 function navTo(s){
   showScreen(s);
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  const nav=document.querySelector('.nav-item[onclick*="navTo(\'"+s+"\')"]');
+  const nav=document.querySelector('.nav-item[data-nav="'+s+'"]');
   if(nav)nav.classList.add('active');
   const titles={dashboard:'Dashboard',clients:'Client Records',tax:'Income Tax Records',trading:'Trading Account',pl:'P&L Account',bs:'Balance Sheet',reports:'Reports'};
   const bc=$('bcCur');if(bc)bc.textContent=titles[s]||s;
@@ -918,8 +919,7 @@ function doLogin(){
       loadTheme();
       if(!loadData()){initSeed()}
       populateAllClients();
-      console.log('App initialized successfully');
-      console.log('Users loaded:',users.length,'| Clients:',clients.length);
+      // console.log('App initialized');
     }catch(e){
       console.error('Init error:',e);
       initSeed();
