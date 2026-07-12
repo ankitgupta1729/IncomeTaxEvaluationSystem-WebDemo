@@ -522,7 +522,7 @@ function toast(msg,type='info'){
   document.body.appendChild(t);
   setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),250)},3000);
 }
-function num(id){const v=$(id).value;return parseFloat(v)||0}
+function num(id){const v=$(id).value;return parseFloat((v||'').replace(/,/g,''))||0}
 function fmt(n){return new Intl.NumberFormat('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)}
 function toggleSidebar(){$('sidebar').classList.toggle('open')}
 function toggleTheme(){
@@ -778,15 +778,19 @@ function loadPL(){
   const r=pls.find(t=>t.code===cc&&t.ay===ay);
   $('plForm').style.display='block';
   if(r){
-    ['Os','Pur','Cs','Cogs','Gprof','Ae','Se','Ebe','Fc','Dep','Oe','Te','Np','Oi','Ii','Di'].forEach(k=>{$('pl'+k).value=r[k.toLowerCase()]||0});
+    ['Os','Pur','Cs'].forEach(k=>{$('pl'+k).value=r[k.toLowerCase()]||0});
+    ['Cogs','Gprof','Te','Np'].forEach(k=>{$('pl'+k+'Disp').textContent=fmt(r[k.toLowerCase()]||0)});
+    ['Ae','Se','Ebe','Fc','Dep','Oe','Oi','Ii','Di'].forEach(k=>{$('pl'+k).value=r[k.toLowerCase()]||0});
   }else{
-    ['Os','Pur','Cs','Cogs','Gprof','Ae','Se','Ebe','Fc','Dep','Oe','Te','Np','Oi','Ii','Di'].forEach(k=>{$('pl'+k).value='0'});
+    ['Os','Pur','Cs'].forEach(k=>{$('pl'+k).value='0'});
+    ['Cogs','Gprof','Te','Np'].forEach(k=>{$('pl'+k+'Disp').textContent='0.00'});
+    ['Ae','Se','Ebe','Fc','Dep','Oe','Oi','Ii','Di'].forEach(k=>{$('pl'+k).value='0'});
   }
   calcPL();
 }
 function calcPL(){
   const os=num('plOs'),pur=num('plPur'),cs=num('plCs');
-  const cogs=pur-os+cs;const gp=cogs;
+  const cogs=os+pur-cs;const gp=cogs;
   const ae=num('plAe'),se=num('plSe'),ebe=num('plEbe'),fc=num('plFc'),dep=num('plDep'),oe=num('plOe');
   const te=ae+se+ebe+fc+dep+oe;const np=gp-te;
   const oi=num('plOi'),ii=num('plIi'),di=num('plDi');
@@ -813,10 +817,12 @@ function loadBS(){
   const r=bs.find(t=>t.code===cc&&t.ay===ay);
   $('bsForm').style.display='block';
   if(r){
-    ['Sc','Rs','Sl','Ul','Cl','Tl','Fa','Inv','Inv2','Deb','Cb','Oca','Ta'].forEach(k=>{$('bs'+k).value=r[k.toLowerCase()]||0});
+    ['Sc','Rs','Sl','Ul','Cl','Fa','Inv','Inv2','Deb','Cb','Oca'].forEach(k=>{$('bs'+k).value=r[k.toLowerCase()]||0});
+    ['Tl','Ta'].forEach(k=>{$('bs'+k+'Disp').textContent=fmt(r[k.toLowerCase()]||0)});
     $('bsCont').value=r.cont||'';
   }else{
-    ['Sc','Rs','Sl','Ul','Cl','Tl','Fa','Inv','Inv2','Deb','Cb','Oca','Ta'].forEach(k=>{$('bs'+k).value='0'});
+    ['Sc','Rs','Sl','Ul','Cl','Fa','Inv','Inv2','Deb','Cb','Oca'].forEach(k=>{$('bs'+k).value='0'});
+    ['Tl','Ta'].forEach(k=>{$('bs'+k+'Disp').textContent='0.00'});
     $('bsCont').value='';
   }
   calcBS();
